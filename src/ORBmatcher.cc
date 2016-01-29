@@ -26,8 +26,11 @@
 #include<opencv2/features2d/features2d.hpp>
 
 #include "Thirdparty/DBoW2/DBoW2/FeatureVector.h"
-
+#ifdef _WIN32
+#include <stdint.h>
+#else
 #include<stdint-gcc.h>
+#endif 
 
 using namespace std;
 

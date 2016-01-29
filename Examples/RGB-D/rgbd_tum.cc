@@ -115,7 +115,11 @@ int main(int argc, char **argv)
             T = tframe-vTimestamps[ni-1];
 
         if(ttrack<T)
-            usleep((T-ttrack)*1e6);
+#ifdef _WIN32
+			Sleep((T - ttrack)*1e3);
+#else
+			usleep((T - ttrack)*1e6);
+#endif
     }
 
     // Stop all threads

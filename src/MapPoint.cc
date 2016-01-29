@@ -271,8 +271,17 @@ void MapPoint::ComputeDistinctiveDescriptors()
 
     // Compute distances between them
     const size_t N = vDescriptors.size();
-
-    float Distances[N][N];
+#ifdef _WIN32
+	float **Distances;
+	Distances = new float* [N];
+	for(int i = 0; i < N; i ++)
+	{
+		Distances[i] = new float[N];
+	}
+#else
+	float Distances[N][N];
+#endif
+    
     for(size_t i=0;i<N;i++)
     {
         Distances[i][i]=0;
@@ -299,6 +308,11 @@ void MapPoint::ComputeDistinctiveDescriptors()
             BestIdx = i;
         }
     }
+#ifdef _WIN32
+	for(int i = 0; i < N; i ++)
+		delete[]Distances[i];
+	delete[]Distances;
+#endif 
 
     {
         unique_lock<mutex> lock(mMutexFeatures);

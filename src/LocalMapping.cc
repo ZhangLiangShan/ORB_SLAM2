@@ -91,7 +91,11 @@ void LocalMapping::Run()
             // Safe area to stop
             while(isStopped() && !CheckFinish())
             {
-                usleep(3000);
+#ifdef _WIN32
+				Sleep(3);
+#else
+				usleep(3000);
+#endif
             }
             if(CheckFinish())
                 break;
@@ -105,7 +109,11 @@ void LocalMapping::Run()
         if(CheckFinish())
             break;
 
-        usleep(3000);
+#ifdef _WIN32
+		Sleep(3);
+#else
+		usleep(3000);
+#endif
     }
 
     SetFinish();
@@ -718,7 +726,11 @@ void LocalMapping::RequestReset()
             if(!mbResetRequested)
                 break;
         }
-        usleep(3000);
+#ifdef _WIN32
+		Sleep(3);
+#else
+		usleep(3000);
+#endif
     }
 }
 

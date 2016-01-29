@@ -21,13 +21,14 @@ if(MSVC90)
   add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY=1)
   message(STATUS "Disabling memory alignment for MSVC8")
 endif(MSVC90)
-
+SET(g2o_SOURCE_DIR ${PROJECT_SOURCE_DIR})
+SET(g2o_RUNTIME_OUTPUT_DIRECTORY ${g2o_SOURCE_DIR}/bin CACHE PATH "Target for the binaries")
 # Set the output directory for the build executables and libraries
-IF(WIN32)
-  SET(g2o_LIBRARY_OUTPUT_DIRECTORY ${g2o_SOURCE_DIR}/bin CACHE PATH "Target for the libraries")
-ELSE(WIN32)
+#IF(WIN32)
+#  SET(g2o_LIBRARY_OUTPUT_DIRECTORY ${g2o_SOURCE_DIR}/bin CACHE PATH "Target for the libraries")
+#ELSE(WIN32)
   SET(g2o_LIBRARY_OUTPUT_DIRECTORY ${g2o_SOURCE_DIR}/lib CACHE PATH "Target for the libraries")
-ENDIF(WIN32)
+#ENDIF(WIN32)
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${g2o_LIBRARY_OUTPUT_DIRECTORY})
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${g2o_LIBRARY_OUTPUT_DIRECTORY})
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${g2o_RUNTIME_OUTPUT_DIRECTORY})
@@ -57,14 +58,32 @@ IF(OPENMP_FOUND AND G2O_USE_OPENMP)
   MESSAGE(STATUS "Compiling with OpenMP support")
 ENDIF(OPENMP_FOUND AND G2O_USE_OPENMP)
 
-# Compiler specific options for gcc
-SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -march=native") 
-SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -march=native") 
+IF(WIN32)
+  #ADD_DEFINITIONS(-DG2O_SHARED_LIBS)
+  SET (G2O_LIB_TYPE STATIC)
+  ADD_DEFINITIONS(-DWINDOWS)
+  MESSAGE(STATUS "Compiling on Windows")
+  IF(MSVC)
+    MESSAGE(STATUS "Compiling with MSVC")
+    ADD_DEFINITIONS(-DNOMINMAX)
+    ADD_DEFINITIONS(-D_USE_MATH_DEFINES)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS=1)  # Avoid deprecated fprintf(), etc.
+    add_definitions("/nologo")
+    add_definitions("/wd4244") # Conversion from double -> int
+    add_definitions("/wd4267") # Conversion during return
+    add_definitions("/wd4522") # Duplicated operator=() in Eigen headers
+  ENDIF(MSVC)
+ENDIF(WIN32)
 
-# activate warnings !!!
-SET(g2o_C_FLAGS "${g2o_C_FLAGS} -Wall -W")
-SET(g2o_CXX_FLAGS "${g2o_CXX_FLAGS} -Wall -W")
+IF(CMAKE_COMPILER_IS_GNUCXX)
+  # Compiler specific options for gcc
+  SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -march=native") 
+  SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -march=native") 
 
+  # activate warnings !!!
+  SET(g2o_C_FLAGS "${g2o_C_FLAGS} -Wall -W")
+  SET(g2o_CXX_FLAGS "${g2o_CXX_FLAGS} -Wall -W")
+ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 # specifying compiler flags
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${g2o_CXX_FLAGS}")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${g2o_C_FLAGS}")
@@ -79,6 +98,7 @@ ELSE(EIGEN3_FOUND)
 ENDIF(EIGEN3_FOUND)
 
 # Generate config.h
+SET(G2O_SHARED_LIBS ${BUILD_SHARED_LIBS})
 SET(G2O_CXX_COMPILER "${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER}")
 configure_file(config.h.in ${g2o_SOURCE_DIR}/config.h)
 

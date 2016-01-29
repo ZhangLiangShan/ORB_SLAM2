@@ -14,6 +14,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall   -O3 -march=native")
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+if(MSVC AND (MSVC10 OR MSVC11 OR MSVC12))
+   set(COMPILER_SUPPORTS_CXX11 1)
+endif()
 if(COMPILER_SUPPORTS_CXX11)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
    add_definitions(-DCOMPILEDWITHC11)
@@ -41,7 +44,7 @@ ${Pangolin_INCLUDE_DIRS}
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 
-add_library(${PROJECT_NAME} SHARED
+add_library(${PROJECT_NAME} STATIC
 src/System.cc
 src/Tracking.cc
 src/LocalMapping.cc
@@ -63,14 +66,22 @@ src/Initializer.cc
 src/Viewer.cc
 )
 
+IF(WIN32)
+  SET(ORB_SLAM_LINKER_LIBS ${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/$(Configuration)/DBoW2.lib
+   ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/$(Configuration)/g2o.lib)
+ELSE(WIN32)
+  SET(ORB_SLAM_LINKER_LIBS ${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
+   ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so)
+ENDIF(WIN32)
+
 target_link_libraries(${PROJECT_NAME}
 ${OpenCV_LIBS}
 ${EIGEN3_LIBS}
 ${Pangolin_LIBRARIES}
-${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
-${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
+${ORB_SLAM_LINKER_LIBS}
 )
-
+# Build third party
+add_subdirectory(Thirdparty) 
 # Build examples
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D)

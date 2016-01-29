@@ -26,9 +26,15 @@ set(SRCS_DUTILS
 
 find_package(OpenCV REQUIRED)
 
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+IF(WIN32)
+  set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+  include_directories(${OpenCV_INCLUDE_DIRS})
+  add_library(DBoW2 STATIC ${SRCS_DBOW2} ${SRCS_DUTILS})
+ELSE(WIN32)
+   set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+   include_directories(${OpenCV_INCLUDE_DIRS})
+  add_library(DBoW2 SHARED ${SRCS_DBOW2} ${SRCS_DUTILS})
+ENDIF(WIN32)
 
-include_directories(${OpenCV_INCLUDE_DIRS})
-add_library(DBoW2 SHARED ${SRCS_DBOW2} ${SRCS_DUTILS})
 target_link_libraries(DBoW2 ${OpenCV_LIBS})
 
