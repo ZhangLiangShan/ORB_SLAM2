@@ -620,7 +620,7 @@ void Frame::ComputeStereoMatches()
             }
         }
     }
-
+	if (vDistIdx.size() < 1) return;
     sort(vDistIdx.begin(),vDistIdx.end());
     const float median = vDistIdx[vDistIdx.size()/2].first;
     const float thDist = 1.5f*1.4f*median;
