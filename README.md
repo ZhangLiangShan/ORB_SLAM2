@@ -1,3 +1,8 @@
+**注意：直接cmake会报错，还有一些依赖库需要自己配置一下，Eigen库的路径在Cmake中自己设置一下，Blas库以及Lapack自己配置一下，可以直接到相对于vs的版本，vs2013的版本下载地址[http://www.fi.muni.cz/~xsvobod2/misc/lapack/](http://www.fi.muni.cz/~xsvobod2/misc/lapack/),
+另外要注意的是Pangolin_DIR的路径，这个路径选择到其安装的cmake路径，即PangolinConfig.cmake的路径，比如我电脑D:\Program Files (x86)\Pangolin\lib\cmake\Pangolin，再把pangolin_export.h文件拷贝到其安装目录的include下，不然提示找不到。**
+
+**其他无需配置，g2o和DBoW2会自动生成项目文件，另外我运行Debug模式，程序会报错，具体原因还没查，Release下可运行，运行TUM或KITTI数据集单目初始化比较慢，还会出现丢失的情况，运行KITTI双目立体没有问题，效果还行。**
+
 # ORB-SLAM2
 #### Current version: 1.0.0 
 
