@@ -27,17 +27,18 @@
 #ifndef G2O_SBA_TYPES
 #define G2O_SBA_TYPES
 
-#include "../core/base_vertex.h"
+#include "g2o/core/base_vertex.h"
 
 #include <Eigen/Geometry>
 #include <iostream>
 
+#include "g2o_types_api.h"
 namespace g2o {
 
 /**
  * \brief Point vertex, XYZ
  */
- class VertexSBAPointXYZ : public BaseVertex<3, Vector3d>
+class G2O_TYPES_API VertexSBAPointXYZ : public BaseVertex<3, Vector3D>
 {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW    
@@ -51,7 +52,7 @@ namespace g2o {
 
     virtual void oplusImpl(const double* update)
     {
-      Eigen::Map<const Vector3d> v(update);
+      Eigen::Map<const Vector3D> v(update);
       _estimate += v;
     }
 };

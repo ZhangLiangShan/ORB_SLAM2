@@ -28,7 +28,7 @@ namespace ORB_SLAM2
 {
 
 // THIS IS THE INITIALIZER FOR MONOCULAR SLAM. NOT USED IN THE STEREO OR RGBD CASE.
-class Initializer
+class ORB_SLAM2_API Initializer
 {
     typedef pair<int,int> Match;
 

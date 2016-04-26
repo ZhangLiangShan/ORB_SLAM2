@@ -37,7 +37,7 @@ class Tracking;
 class LoopClosing;
 class Map;
 
-class LocalMapping
+class ORB_SLAM2_API LocalMapping
 {
 public:
     LocalMapping(Map* pMap, const float bMonocular);

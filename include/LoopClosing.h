@@ -41,7 +41,7 @@ class LocalMapping;
 class KeyFrameDatabase;
 
 
-class LoopClosing
+class ORB_SLAM2_API LoopClosing
 {
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW

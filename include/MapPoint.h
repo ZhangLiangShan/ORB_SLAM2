@@ -36,7 +36,7 @@ class Map;
 class Frame;
 
 
-class MapPoint
+class ORB_SLAM2_API MapPoint
 {
 public:
     MapPoint(const cv::Mat &Pos, KeyFrame* pRefKF, Map* pMap);

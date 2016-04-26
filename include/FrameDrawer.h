@@ -21,6 +21,7 @@
 #ifndef FRAMEDRAWER_H
 #define FRAMEDRAWER_H
 
+#include "OrbSlamApi.h"
 #include "Tracking.h"
 #include "MapPoint.h"
 #include "Map.h"
@@ -37,7 +38,7 @@ namespace ORB_SLAM2
 class Tracking;
 class Viewer;
 
-class FrameDrawer
+class ORB_SLAM2_API FrameDrawer
 {
 public:
     FrameDrawer(Map* pMap);

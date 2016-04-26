@@ -29,6 +29,11 @@
 namespace ORB_SLAM2
 {
 
+	bool has_suffix(const std::string &str, const std::string &suffix) {
+		std::size_t index = str.find(suffix, str.size() - suffix.size());
+		return (index != std::string::npos);
+	}
+
 System::System(const std::string &strVocFile, const std::string &strSettingsFile, const eSensor sensor,
                const bool bUseViewer):mSensor(sensor),mbReset(false),mbActivateLocalizationMode(false),
         mbDeactivateLocalizationMode(false)
@@ -62,13 +67,17 @@ System::System(const std::string &strVocFile, const std::string &strSettingsFile
     cout << endl << "Loading ORB Vocabulary. This could take a while..." << endl;
 
     mpVocabulary = new ORBVocabulary();
-    bool bVocLoad = mpVocabulary->loadFromTextFile(strVocFile);
-    if(!bVocLoad)
-    {
-        cerr << "Wrong path to vocabulary. " << endl;
-        cerr << "Falied to open at: " << strVocFile << endl;
-        exit(-1);
-    }
+	bool bVocLoad = false; // 这边为了导入词汇表的时间快，可直接导入二进制流
+	if (has_suffix(strVocFile, ".txt"))
+		bVocLoad = mpVocabulary->loadFromTextFile(strVocFile);
+	else
+		bVocLoad = mpVocabulary->loadFromBinaryFile(strVocFile);
+	if (!bVocLoad)
+	{
+		std::cerr << "Wrong path to vocabulary. " << std::endl;
+		std::cerr << "Falied to open at: " << strVocFile << std::endl;
+		exit(-1);
+	}
     cout << "Vocabulary loaded!" << endl << endl;
 
     //Create KeyFrame Database

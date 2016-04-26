@@ -14,11 +14,12 @@
 
 #include <cstdlib>
 #include <vector>
+#include "DUtilsApi.h"
 
 namespace DUtils {
 
 /// Functions to generate pseudo-random numbers
-class Random
+class  DBOW2_API Random
 {
 public:
   class UnrepeatedRandomizer;
@@ -109,7 +110,7 @@ private:
 // ---------------------------------------------------------------------------
 
 /// Provides pseudo-random numbers with no repetitions
-class Random::UnrepeatedRandomizer
+class DBOW2_API Random::UnrepeatedRandomizer
 {
 public:
 

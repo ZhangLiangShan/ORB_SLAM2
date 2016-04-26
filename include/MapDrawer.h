@@ -31,7 +31,7 @@
 namespace ORB_SLAM2
 {
 
-class MapDrawer
+class ORB_SLAM2_API MapDrawer
 {
 public:
     MapDrawer(Map* pMap, const string &strSettingPath);

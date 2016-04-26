@@ -22,7 +22,7 @@
 #define FRAME_H
 
 #include<vector>
-
+#include "OrbSlamApi.h"
 #include "MapPoint.h"
 #include "Thirdparty/DBoW2/DBoW2/BowVector.h"
 #include "Thirdparty/DBoW2/DBoW2/FeatureVector.h"
@@ -40,7 +40,7 @@ namespace ORB_SLAM2
 class MapPoint;
 class KeyFrame;
 
-class Frame
+class ORB_SLAM2_API Frame
 {
 public:
     Frame();

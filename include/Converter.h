@@ -21,6 +21,7 @@
 #ifndef CONVERTER_H
 #define CONVERTER_H
 
+#include "OrbSlamApi.h"
 #include<opencv2/core/core.hpp>
 
 #include<Eigen/Dense>
@@ -30,7 +31,7 @@
 namespace ORB_SLAM2
 {
 
-class Converter
+class ORB_SLAM2_API Converter
 {
 public:
     static std::vector<cv::Mat> toDescriptorVector(const cv::Mat &Descriptors);

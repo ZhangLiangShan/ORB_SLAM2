@@ -40,7 +40,7 @@ class MapPoint;
 class Frame;
 class KeyFrameDatabase;
 
-class KeyFrame
+class ORB_SLAM2_API KeyFrame
 {
 public:
     KeyFrame(Frame &F, Map* pMap, KeyFrameDatabase* pKFDB);

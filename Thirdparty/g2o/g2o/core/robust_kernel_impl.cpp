@@ -47,7 +47,7 @@ void RobustKernelScaleDelta::setKernel(const RobustKernelPtr& ptr)
   _kernel = ptr;
 }
 
-void RobustKernelScaleDelta::robustify(double error, Eigen::Vector3d& rho) const
+void RobustKernelScaleDelta::robustify(double error, Vector3D& rho) const
 {
   if (_kernel.get()) {
     double dsqr = _delta * _delta;
@@ -75,7 +75,7 @@ void RobustKernelHuber::setDeltaSqr(const double &delta, const double &deltaSqr)
 	_delta = delta;
 }
 
-void RobustKernelHuber::robustify(double e, Eigen::Vector3d& rho) const
+void RobustKernelHuber::robustify(double e, Vector3D& rho) const
 {
   //dsqr = _delta * _delta;
   if (e <= dsqr) { // inlier
@@ -97,7 +97,7 @@ void RobustKernelTukey::setDeltaSqr(const double &deltaSqr, const double &inv)
  
 }
 
-void RobustKernelTukey::robustify(double e, Eigen::Vector3d& rho) const
+void RobustKernelTukey::robustify(double e, Vector3D& rho) const
 {
   if (e <= _deltaSqr) { // inlier
     double factor = e*_invDeltaSqr;
@@ -113,7 +113,7 @@ void RobustKernelTukey::robustify(double e, Eigen::Vector3d& rho) const
   }
 }
 
-void RobustKernelPseudoHuber::robustify(double e2, Eigen::Vector3d& rho) const
+void RobustKernelPseudoHuber::robustify(double e2, Vector3D& rho) const
 {
   double dsqr = _delta * _delta;
   double dsqrReci = 1. / dsqr;
@@ -124,17 +124,44 @@ void RobustKernelPseudoHuber::robustify(double e2, Eigen::Vector3d& rho) const
   rho[2] = -0.5 * dsqrReci * rho[1] / aux1;
 }
 
-void RobustKernelCauchy::robustify(double e2, Eigen::Vector3d& rho) const
+void RobustKernelCauchy::robustify(double e2, Vector3D& rho) const
 {
   double dsqr = _delta * _delta;
   double dsqrReci = 1. / dsqr;
   double aux = dsqrReci * e2 + 1.0;
   rho[0] = dsqr * log(aux);
   rho[1] = 1. / aux;
-  rho[2] = -dsqrReci * std::pow(rho[1], 2); 
+  rho[2] = -dsqrReci * std::pow(rho[1], 2);
 }
 
-void RobustKernelSaturated::robustify(double e2, Eigen::Vector3d& rho) const
+void RobustKernelGemanMcClure::robustify(double e2, Vector3D& rho) const
+{
+  const double aux = _delta / (_delta + e2);
+  rho[0] = e2 * aux;
+  rho[1] = aux * aux;
+  rho[2] = -2. * rho[1] * aux;
+}
+
+void RobustKernelWelsch::robustify(double e2, Vector3D& rho) const
+{
+  const double dsqr = _delta * _delta;
+  const double aux = e2 / dsqr;
+  const double aux2 = exp (-aux);
+  rho[0] = dsqr * (1. - aux2);
+  rho[1] = aux2;
+  rho[2] = -aux2 / dsqr;
+}
+
+void RobustKernelFair::robustify(double e2, Vector3D& rho) const
+{
+  const double sqrte = sqrt(e2);
+  const double aux = sqrte / _delta;
+  rho[0] = 2. *  _delta * _delta * (aux - log(1. + aux));
+  rho[1] = 1. / (1. + aux);
+  rho[2] = - 0.5 / (sqrte * (1. + aux));
+}
+
+void RobustKernelSaturated::robustify(double e2, Vector3D& rho) const
 {
   double dsqr = _delta * _delta;
   if (e2 <= dsqr) { // inlier
@@ -149,7 +176,7 @@ void RobustKernelSaturated::robustify(double e2, Eigen::Vector3d& rho) const
 }
 
 //delta is used as $phi$
-void RobustKernelDCS::robustify(double e2, Eigen::Vector3d& rho) const
+void RobustKernelDCS::robustify(double e2, Vector3D& rho) const
 {
   const double& phi = _delta;
   double scale = (2.0*phi)/(phi+e2);
@@ -158,16 +185,17 @@ void RobustKernelDCS::robustify(double e2, Eigen::Vector3d& rho) const
 
   rho[0] = scale*e2*scale;
   rho[1] = (scale*scale);
-  rho[2] = 0;    
+  rho[2] = 0;
 }
-
 
 // register the kernel to their factory
 G2O_REGISTER_ROBUST_KERNEL(Huber, RobustKernelHuber)
-G2O_REGISTER_ROBUST_KERNEL(Tukey, RobustKernelTukey)
 G2O_REGISTER_ROBUST_KERNEL(PseudoHuber, RobustKernelPseudoHuber)
 G2O_REGISTER_ROBUST_KERNEL(Cauchy, RobustKernelCauchy)
+G2O_REGISTER_ROBUST_KERNEL(GemanMcClure, RobustKernelGemanMcClure)
+G2O_REGISTER_ROBUST_KERNEL(Welsch, RobustKernelWelsch)
+G2O_REGISTER_ROBUST_KERNEL(Fair, RobustKernelFair)
+G2O_REGISTER_ROBUST_KERNEL(Tukey, RobustKernelTukey)
 G2O_REGISTER_ROBUST_KERNEL(Saturated, RobustKernelSaturated)
 G2O_REGISTER_ROBUST_KERNEL(DCS, RobustKernelDCS)
-
 } // end namespace g2o

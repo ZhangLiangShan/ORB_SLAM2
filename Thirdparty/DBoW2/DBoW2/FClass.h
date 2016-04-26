@@ -13,6 +13,7 @@
 #include <opencv2/core/core.hpp>
 #include <vector>
 #include <string>
+#include "DBoW2Api.h"
 
 namespace DBoW2 {
 
@@ -22,7 +23,7 @@ namespace DBoW2 {
  * parameter F when creating Templated structures
  * (TemplatedVocabulary, TemplatedDatabase, ...)
  */
-class FClass
+class DBOW2_API FClass
 {
   class TDescriptor;
   typedef const TDescriptor *pDescriptor;

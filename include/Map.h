@@ -35,7 +35,7 @@ namespace ORB_SLAM2
 class MapPoint;
 class KeyFrame;
 
-class Map
+class ORB_SLAM2_API Map
 {
 public:
     Map();

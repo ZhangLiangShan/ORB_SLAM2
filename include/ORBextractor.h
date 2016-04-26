@@ -21,6 +21,7 @@
 #ifndef ORBEXTRACTOR_H
 #define ORBEXTRACTOR_H
 
+#include "OrbSlamApi.h"
 #include <vector>
 #include <list>
 #include <opencv/cv.h>
@@ -42,7 +43,7 @@ public:
     bool bNoMore;
 };
 
-class ORBextractor
+class ORB_SLAM2_API ORBextractor
 {
 public:
     

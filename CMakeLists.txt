@@ -32,6 +32,13 @@ else()
    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
+IF(WIN32)
+  ADD_DEFINITIONS(-DORB_SLAM2_SHARED_LIBS)
+  ADD_DEFINITIONS(-DG2O_SHARED_LIBS)#防止静态函数导出链接不到
+  SET (ORB_SLAM2_LIB_TYPE SHARED)
+  ADD_DEFINITIONS(-DWINDOWS)
+ENDIF(WIN32)
+
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
 find_package(OpenCV 2.4.3 REQUIRED)
@@ -45,10 +52,16 @@ ${EIGEN3_INCLUDE_DIR}
 ${Pangolin_INCLUDE_DIRS}
 )
 
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/Thirdparty/g2o)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2)
 
+#设置路径，保存lib和bin到同一目录
+SET( LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib CACHE PATH "Output directory for libraries" )
+SET( EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin CACHE PATH "Output directory for applications" )
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+	
 file(GLOB orbslam_include ${PROJECT_SOURCE_DIR}/include/*.h )
-add_library(${PROJECT_NAME} STATIC
+add_library(${PROJECT_NAME} SHARED
 	${orbslam_include}
 src/System.cc
 src/Tracking.cc
@@ -71,13 +84,9 @@ src/Initializer.cc
 src/Viewer.cc
 )
 
-IF(WIN32)
-  SET(ORB_SLAM_LINKER_LIBS ${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/$(Configuration)/DBoW2.lib
-   ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/$(Configuration)/g2o.lib)
-ELSE(WIN32)
-  SET(ORB_SLAM_LINKER_LIBS ${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
-   ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so)
-ENDIF(WIN32)
+link_directories(${LIBRARY_OUTPUT_PATH})
+
+SET(ORB_SLAM_LINKER_LIBS DBoW2 g2o)
 
 target_link_libraries(${PROJECT_NAME}
 ${OpenCV_LIBS}
@@ -89,19 +98,19 @@ ${ORB_SLAM_LINKER_LIBS}
 add_subdirectory(Thirdparty) 
 # Build examples
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D)
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D)
 
 add_executable(rgbd_tum
 Examples/RGB-D/rgbd_tum.cc)
 target_link_libraries(rgbd_tum ${PROJECT_NAME})
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Stereo)
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Stereo)
 
 add_executable(stereo_kitti
 Examples/Stereo/stereo_kitti.cc)
 target_link_libraries(stereo_kitti ${PROJECT_NAME})
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular)
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular)
 
 add_executable(mono_tum
 Examples/Monocular/mono_tum.cc)

@@ -50,7 +50,7 @@ class LocalMapping;
 class LoopClosing;
 class System;
 
-class Tracking
+class ORB_SLAM2_API Tracking
 {  
 
 public:

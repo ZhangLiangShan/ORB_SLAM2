@@ -39,7 +39,7 @@ class KeyFrame;
 class Frame;
 
 
-class KeyFrameDatabase
+class ORB_SLAM2_API KeyFrameDatabase
 {
 public:
 

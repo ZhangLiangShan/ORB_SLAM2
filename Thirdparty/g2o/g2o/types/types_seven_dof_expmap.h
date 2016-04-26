@@ -31,24 +31,24 @@
 #ifndef G2O_SEVEN_DOF_EXPMAP_TYPES
 #define G2O_SEVEN_DOF_EXPMAP_TYPES
 
-#include "../core/base_vertex.h"
-#include "../core/base_binary_edge.h"
-#include "types_six_dof_expmap.h"
+#include "g2o/types/g2o_types_api.h"
+#include "g2o/core/base_vertex.h"
+#include "g2o/core/base_binary_edge.h"
+#include "g2o/types/types_six_dof_expmap.h"
 #include "sim3.h"
 
 namespace g2o {
 
-  using namespace Eigen;
 
   /**
  * \brief Sim3 Vertex, (x,y,z,qw,qx,qy,qz)
  * the parameterization for the increments constructed is a 7d vector
  * (x,y,z,qx,qy,qz) (note that we leave out the w part of the quaternion.
  */
-  class VertexSim3Expmap : public BaseVertex<7, Sim3>
+class G2O_TYPES_API VertexSim3Expmap : public BaseVertex<7, Sim3>
   {
   public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
     VertexSim3Expmap();
     virtual bool read(std::istream& is);
     virtual bool write(std::ostream& os) const;
@@ -68,20 +68,20 @@ namespace g2o {
       setEstimate(s*estimate());
     }
 
-    Vector2d _principle_point1, _principle_point2;
-    Vector2d _focal_length1, _focal_length2;
+	Vector2D _principle_point1, _principle_point2;
+	Vector2D _focal_length1, _focal_length2;
 
-    Vector2d cam_map1(const Vector2d & v) const
+    Vector2D cam_map1(const Vector2D & v) const
     {
-      Vector2d res;
+      Vector2D res;
       res[0] = v[0]*_focal_length1[0] + _principle_point1[0];
       res[1] = v[1]*_focal_length1[1] + _principle_point1[1];
       return res;
     }
 
-    Vector2d cam_map2(const Vector2d & v) const
+    Vector2D cam_map2(const Vector2D & v) const
     {
-      Vector2d res;
+      Vector2D res;
       res[0] = v[0]*_focal_length2[0] + _principle_point2[0];
       res[1] = v[1]*_focal_length2[1] + _principle_point2[1];
       return res;
@@ -96,7 +96,7 @@ namespace g2o {
   /**
  * \brief 7D edge between two Vertex7
  */
-  class EdgeSim3 : public BaseBinaryEdge<7, Sim3, VertexSim3Expmap, VertexSim3Expmap>
+class G2O_TYPES_API EdgeSim3 : public BaseBinaryEdge<7, Sim3, VertexSim3Expmap, VertexSim3Expmap>
   {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -127,7 +127,7 @@ namespace g2o {
 
 
 /**/
-class EdgeSim3ProjectXYZ : public  BaseBinaryEdge<2, Vector2d,  VertexSBAPointXYZ, VertexSim3Expmap>
+class G2O_TYPES_API EdgeSim3ProjectXYZ : public  BaseBinaryEdge<2, Vector2D, VertexSBAPointXYZ, VertexSim3Expmap>
 {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -140,7 +140,7 @@ class EdgeSim3ProjectXYZ : public  BaseBinaryEdge<2, Vector2d,  VertexSBAPointXY
       const VertexSim3Expmap* v1 = static_cast<const VertexSim3Expmap*>(_vertices[1]);
       const VertexSBAPointXYZ* v2 = static_cast<const VertexSBAPointXYZ*>(_vertices[0]);
 
-      Vector2d obs(_measurement);
+      Vector2D obs(_measurement);
       _error = obs-v1->cam_map1(project(v1->estimate().map(v2->estimate())));
     }
 
@@ -149,7 +149,7 @@ class EdgeSim3ProjectXYZ : public  BaseBinaryEdge<2, Vector2d,  VertexSBAPointXY
 };
 
 /**/
-class EdgeInverseSim3ProjectXYZ : public  BaseBinaryEdge<2, Vector2d,  VertexSBAPointXYZ, VertexSim3Expmap>
+class G2O_TYPES_API EdgeInverseSim3ProjectXYZ : public  BaseBinaryEdge<2, Vector2D, VertexSBAPointXYZ, VertexSim3Expmap>
 {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -162,7 +162,7 @@ class EdgeInverseSim3ProjectXYZ : public  BaseBinaryEdge<2, Vector2d,  VertexSBA
       const VertexSim3Expmap* v1 = static_cast<const VertexSim3Expmap*>(_vertices[1]);
       const VertexSBAPointXYZ* v2 = static_cast<const VertexSBAPointXYZ*>(_vertices[0]);
 
-      Vector2d obs(_measurement);
+      Vector2D obs(_measurement);
       _error = obs-v1->cam_map2(project(v1->estimate().inverse().map(v2->estimate())));
     }
 

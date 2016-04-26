@@ -24,14 +24,11 @@
 // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// Modified Raul Mur Artal (2014)
-// - Stop criterium (solve function)
-
 #include "optimization_algorithm_levenberg.h"
 
 #include <iostream>
 
-#include "../stuff/timeutil.h"
+#include "g2o/stuff/timeutil.h"
 
 #include "sparse_optimizer.h"
 #include "solver.h"
@@ -51,7 +48,6 @@ namespace g2o {
     _maxTrialsAfterFailure = _properties.makeProperty<Property<int> >("maxTrialsAfterFailure", 10);
     _ni=2.;
     _levenbergIterations = 0;
-    _nBad = 0;
   }
 
   OptimizationAlgorithmLevenberg::~OptimizationAlgorithmLevenberg()
@@ -81,19 +77,16 @@ namespace g2o {
 
     double currentChi = _optimizer->activeRobustChi2();
     double tempChi=currentChi;
-
-    double iniChi = currentChi;
-
+	double iniChi = currentChi;
     _solver->buildSystem();
     if (globalStats) {
       globalStats->timeQuadraticForm = get_monotonic_time()-t;
     }
 
     // core part of the Levenbarg algorithm
-    if (iteration == 0) {       
+    if (iteration == 0) {
       _currentLambda = computeLambdaInit();
       _ni = 2;
-      _nBad = 0;
     }
 
     double rho=0;

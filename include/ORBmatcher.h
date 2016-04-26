@@ -34,7 +34,7 @@
 namespace ORB_SLAM2
 {
 
-class ORBmatcher
+class ORB_SLAM2_API ORBmatcher
 {    
 public:
 

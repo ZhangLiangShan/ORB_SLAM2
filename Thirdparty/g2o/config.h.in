@@ -10,4 +10,8 @@
 #  error "g2o requires column major Eigen matrices (see http://eigen.tuxfamily.org/bz/show_bug.cgi?id=422)"
 #endif
 
+#ifdef __cplusplus
+#include <g2o/core/eigen_types.h>
+#endif
+
 #endif

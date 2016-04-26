@@ -32,7 +32,7 @@
 namespace ORB_SLAM2
 {
 
-class Sim3Solver
+class ORB_SLAM2_API Sim3Solver
 {
 public:
 

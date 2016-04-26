@@ -37,7 +37,7 @@ class FrameDrawer;
 class MapDrawer;
 class System;
 
-class Viewer
+class ORB_SLAM2_API Viewer
 {
 public:
     Viewer(System* pSystem, FrameDrawer* pFrameDrawer, MapDrawer* pMapDrawer, Tracking *pTracking, const string &strSettingPath);

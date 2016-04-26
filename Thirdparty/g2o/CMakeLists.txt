@@ -22,16 +22,9 @@ if(MSVC90)
   message(STATUS "Disabling memory alignment for MSVC8")
 endif(MSVC90)
 SET(g2o_SOURCE_DIR ${PROJECT_SOURCE_DIR})
-SET(g2o_RUNTIME_OUTPUT_DIRECTORY ${g2o_SOURCE_DIR}/bin CACHE PATH "Target for the binaries")
-# Set the output directory for the build executables and libraries
-#IF(WIN32)
-#  SET(g2o_LIBRARY_OUTPUT_DIRECTORY ${g2o_SOURCE_DIR}/bin CACHE PATH "Target for the libraries")
-#ELSE(WIN32)
-  SET(g2o_LIBRARY_OUTPUT_DIRECTORY ${g2o_SOURCE_DIR}/lib CACHE PATH "Target for the libraries")
-#ENDIF(WIN32)
-SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${g2o_LIBRARY_OUTPUT_DIRECTORY})
-SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${g2o_LIBRARY_OUTPUT_DIRECTORY})
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${g2o_RUNTIME_OUTPUT_DIRECTORY})
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH})
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH})
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
 # Set search directory for looking for our custom CMake scripts to
 # look for SuiteSparse, QGLViewer, and Eigen3.
@@ -59,8 +52,8 @@ IF(OPENMP_FOUND AND G2O_USE_OPENMP)
 ENDIF(OPENMP_FOUND AND G2O_USE_OPENMP)
 
 IF(WIN32)
-  #ADD_DEFINITIONS(-DG2O_SHARED_LIBS)
-  SET (G2O_LIB_TYPE STATIC)
+  ADD_DEFINITIONS(-DG2O_SHARED_LIBS)
+  SET (G2O_LIB_TYPE SHARED)
   ADD_DEFINITIONS(-DWINDOWS)
   MESSAGE(STATUS "Compiling on Windows")
   IF(MSVC)
@@ -100,18 +93,17 @@ ENDIF(EIGEN3_FOUND)
 # Generate config.h
 SET(G2O_SHARED_LIBS ${BUILD_SHARED_LIBS})
 SET(G2O_CXX_COMPILER "${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER}")
-configure_file(config.h.in ${g2o_SOURCE_DIR}/config.h)
+configure_file(config.h.in ${g2o_SOURCE_DIR}/g2o/config.h)
 
 # Set up the top-level include directories
 INCLUDE_DIRECTORIES(
-${g2o_SOURCE_DIR}/core
-${g2o_SOURCE_DIR}/types
-${g2o_SOURCE_DIR}/stuff 
+${g2o_SOURCE_DIR}
 ${G2O_EIGEN3_INCLUDE})
 
 # Include the subdirectories
 ADD_LIBRARY(g2o ${G2O_LIB_TYPE}
 #types
+g2o/types/g2o_types_api.h
 g2o/types/types_sba.h
 g2o/types/types_six_dof_expmap.h
 g2o/types/types_sba.cpp
@@ -122,6 +114,7 @@ g2o/types/se3quat.h
 g2o/types/se3_ops.h
 g2o/types/se3_ops.hpp
 #core
+g2o/core/g2o_core_api.h
 g2o/core/base_edge.h
 g2o/core/base_binary_edge.h
 g2o/core/hyper_graph_action.cpp
@@ -184,6 +177,7 @@ g2o/core/robust_kernel_factory.h
 g2o/core/robust_kernel_impl.cpp 
 g2o/core/robust_kernel_impl.h
 #stuff
+g2o/stuff/g2o_stuff_api.h
 g2o/stuff/string_tools.h
 g2o/stuff/color_macros.h 
 g2o/stuff/macros.h
@@ -196,3 +190,9 @@ g2o/stuff/string_tools.cpp
 g2o/stuff/property.cpp       
 g2o/stuff/property.h       
 )
+# 设置将项目添加到包中
+if(ENABLE_SOLUTION_FOLDERS)
+	set_target_properties(g2o PROPERTIES FOLDER "3rd party")
+else(ENABLE_SOLUTION_FOLDERS)
+	SET_TARGET_PROPERTIES(g2o  PROPERTIES PROJECT_LABEL "(3rd party) g2o")
+endif(ENABLE_SOLUTION_FOLDERS)
