@@ -44,7 +44,9 @@ ${Pangolin_INCLUDE_DIRS}
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 
+file(GLOB orbslam_include ${PROJECT_SOURCE_DIR}/include/*.h )
 add_library(${PROJECT_NAME} STATIC
+	${orbslam_include}
 src/System.cc
 src/Tracking.cc
 src/LocalMapping.cc
